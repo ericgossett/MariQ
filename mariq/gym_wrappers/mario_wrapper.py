@@ -236,7 +236,7 @@ class ImageToPyTorch(gym.ObservationWrapper):
     def observation(self, observation):
         return np.swapaxes(observation, 2, 0)
 
-def wrapper(env):
+def mario_wrapper(env):
     """Apply a common set of wrappers for Atari games."""
     #env = EpisodicLifeEnv(env)
     #env = NoopResetEnv(env, noop_max=10)
