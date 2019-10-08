@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch.autograd as autograd
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import trange
 from ..utils.replay_buffer import ReplayBuffer
 from .estimator import Estimator
@@ -141,3 +142,47 @@ class DQN:
 
         # save if done
         self.save()
+
+    def plot(self, episode, plot_freq):
+            plt.figure(figsize=(20, 10))
+            plt.subplot(221)
+            plt.title('episode: {0} mean reward: {1:.2f}'.format(
+                episode,
+                np.mean(self.log['rewards'][-plot_freq:])
+            ))
+            plt.plot(self.log['rewards'])
+
+
+
+            plt.subplot(222)
+            plt.title('Accumlulated reward')
+            plt.plot(self.log['accum_reward'])
+
+            plt.subplot(223)
+            plt.title('Duration')
+            plt.plot(self.log['duration'])
+
+            plt.subplot(224)
+            plt.title('Huber loss')
+            plt.plot(self.log['losses'])
+            plt.savefig('./plots/{0}.png'.format(episode))
+            # print('{0} plot saved'.format(episode))
+
+
+    def play(self):
+            state = self.env.reset()
+            episode_reward = 0
+            for _ in itertools.count():
+                state = Variable(torch.tensor(state).unsqueeze(0))
+                action =  self.target_agent(state).max(1)[1].view(1, 1).item()
+                print(action)
+                
+                next_state, reward, done, _ = self.env.step(action)
+
+                state = next_state
+                episode_reward += reward
+                self.env.render()
+                if done:
+                    print('reward :', episode_reward)
+                    self.env.close()
+                    break
