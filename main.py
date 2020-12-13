@@ -4,7 +4,7 @@ import gym_super_mario_bros
 from gym_super_mario_bros.actions import RIGHT_ONLY
 from mariq.models import DQN
 from mariq.gym_wrappers import mario_wrapper
-from nes_py.wrappers import BinarySpaceToDiscreteSpaceEnv
+from nes_py.wrappers import JoypadSpace
 
 
 # logger
@@ -18,7 +18,7 @@ logger.info('---- Training started ----')
 
 # Build env (first level, right only)
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
-env = BinarySpaceToDiscreteSpaceEnv(env, RIGHT_ONLY)
+env = JoypadSpace(env, RIGHT_ONLY)
 env = mario_wrapper(env)
 
 # Uncomment for video snapshots
